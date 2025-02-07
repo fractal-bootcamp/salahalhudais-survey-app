@@ -1,0 +1,11 @@
+doctype html
+html(lang="en-us")
+  head
+    title List of Surveys
+  body
+    h1 Survey Titles
+    ul
+    - let messages = Object.keys(flash || {});
+    if messages.length > 0
+      each survey in surveys
+        li= survey.title

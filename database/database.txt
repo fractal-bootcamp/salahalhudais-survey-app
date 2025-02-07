@@ -1,0 +1,140 @@
+import { DataTypes, UUIDV4 } from 'sequelize';
+import sequelize from "./dbConfig";
+
+const Survey = sequelize.define(
+  'Surveys',
+  {
+    surveyId: {
+      type: DataTypes.UUID,
+      defaultValue: UUIDV4,
+      primaryKey: true
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: new Date(),
+    },
+  }
+)
+const Question = sequelize.define(
+  'Question',
+  {
+    questionId: {
+      type: DataTypes.UUID,
+      defaultValue: UUIDV4,
+      primaryKey: true,
+    },
+    question: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    surveyId: {
+      type: DataTypes.UUID,
+      references: {
+        model: Survey,
+        key: 'surveyId'
+      }
+    },
+    // Type multiple choice enum something
+  }
+);
+
+const AnswerChoices = sequelize.define(
+  'AnswerChoices',
+   {
+    answerChoiceId: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+    },
+    questionId: {
+      type: DataTypes.UUID,
+      references: {
+        model: Question,
+        key: 'questionId'
+      }
+    },
+    choice: {
+      type: DataTypes.STRING,
+      defaultValue: true,
+    }
+  }
+)
+
+const Answers = sequelize.define(
+  'Answers',
+  {
+    answerId: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+    },
+    questionId: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'Question',
+        key: 'questionId'
+      }
+    },
+    //SurveyID reference
+    surveyId: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'Survey',
+        key: 'surveyId',
+      }
+    },
+    answer: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
+  }
+)
+
+const QuestionAnswerChoice = sequelize.define('QuestionAnswerChoice', {
+  questionId: {
+    type: DataTypes.UUID,
+    references: { model: Question, key: 'questionId' }
+  },
+  answerChoiceId: {
+    type: DataTypes.UUID,
+    references: { model: AnswerChoices, key: 'answerChoiceId' }
+  }
+});
+
+// Define the associations
+Answers.belongsTo(Question, {
+  foreignKey: 'questionId'
+});
+
+Answers.belongsTo(Survey, {
+  foreignKey: 'surveyId'
+});
+
+AnswerChoices.belongsTo(Question, {
+  foreignKey: 'questionId'
+})
+
+Survey.hasMany(Question, {
+  foreignKey: 'surveyId',
+});
+Question.belongsTo(Survey, {
+  foreignKey: 'surveyId'
+});
+
+Question.hasMany(AnswerChoices, {
+  foreignKey:'questionId',
+  onDelete: 'CASCADE'
+})
+AnswerChoices.belongsTo(Question, {
+  foreignKey: 'questionId'
+})
+Question.belongsToMany(AnswerChoices, 
+  { through: QuestionAnswerChoice 
+
+});
+AnswerChoices.belongsToMany(Question, 
+  { through: QuestionAnswerChoice 
+});
