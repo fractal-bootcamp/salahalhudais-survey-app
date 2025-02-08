@@ -6,7 +6,7 @@ import { eq, sql } from 'drizzle-orm';
 import { cors } from '@elysiajs/cors';
 import { pgTable, text, timestamp, integer, uuid } from 'drizzle-orm/pg-core';
 
-const sql = postgres(process.env.DATABASE_URL!);
+const sql = postgres(process.env.DATABASE_URL!, { ssl: { rejectUnauthorized: false } });
 const db = drizzle(sql);
 
 const app = new Elysia()
@@ -134,11 +134,15 @@ const app = new Elysia()
       const groupedResponses = surveyResponses.reduce((acc, curr) => {
         const existing = acc.find(r => r.id === curr.id);
         if (existing) {
-          existing.answers.push(curr.answers);
+          if (curr.answers) {
+            existing.answers.push(curr.answers);
+          }
         } else {
           acc.push({
             id: curr.id,
             surveyId: curr.surveyId,
+            createdAt: curr.createdAt,
+            answers: curr.answers ? [curr.answers] : []
           });
         }
         return acc;
