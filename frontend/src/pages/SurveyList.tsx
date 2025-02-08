@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Survey } from '../types';
+import { api } from '../utils/api';
 
 export function SurveyList() {
   const [surveys, setSurveys] = useState<Survey[]>([]);
@@ -8,7 +9,7 @@ export function SurveyList() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/surveys')
+    api.get('/api/surveys')
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch surveys');
         return res.json();

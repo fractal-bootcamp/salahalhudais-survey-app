@@ -5,13 +5,5 @@ import netlifyPlugin from '@netlify/vite-plugin-react-router'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(), netlifyPlugin()],
-  server: {
-    proxy: {
-      '/api': {
-        target: process.env.VITE_API_URL || 'http://localhost:3000',
-        changeOrigin: true,
-      },
-    },
-  },
+  plugins: [react(), tailwindcss(), netlifyPlugin()]
 })

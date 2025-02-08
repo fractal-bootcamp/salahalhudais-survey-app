@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Survey, Question } from '../types';
+import { api } from '../utils/api';
 
 export function TakeSurvey() {
   const { id } = useParams<{ id: string }>();
@@ -11,7 +12,7 @@ export function TakeSurvey() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`/api/surveys/${id}`)
+    api.get(`/api/surveys/${id}`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch survey');
         return res.json();
@@ -27,11 +28,7 @@ export function TakeSurvey() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/surveys/${id}/responses`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers }),
-      });
+      const response = await api.post(`/api/surveys/${id}/responses`, { answers });
       
       if (!response.ok) {
         const errorText = await response.text();
