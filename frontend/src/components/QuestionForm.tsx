@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { api } from '../utils/api';
 
 export function QuestionForm({ surveyId, onQuestionAdded }: { surveyId: string, onQuestionAdded: () => void }) {
   const [questionText, setQuestionText] = useState('');
@@ -23,31 +24,22 @@ export function QuestionForm({ surveyId, onQuestionAdded }: { surveyId: string, 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      if (questionType === 'multiple_choice' && options.filter(Boolean).length < 2) {
-        setError('Multiple choice questions need at least 2 options');
-        return;
-      }
-
-      const response = await fetch(`/api/surveys/${surveyId}/questions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          questionText,
-          questionType,
-          options: questionType === 'multiple_choice' ? options.filter(Boolean) : [],
-        }),
+      const response = await api.post(`/api/surveys/${surveyId}/questions`, {
+        questionText,
+        questionType,
+        options: questionType === 'multiple_choice' ? options : []
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create question');
+        throw new Error('Failed to add question');
       }
 
-      onQuestionAdded();
       setQuestionText('');
-      setOptions(['']);
-      setError(null);
+      setQuestionType('text');
+      setOptions([]);
+      onQuestionAdded();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create question');
+      setError(err instanceof Error ? err.message : 'Failed to add question');
     }
   };
 

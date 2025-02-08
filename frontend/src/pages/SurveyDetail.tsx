@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { QuestionForm } from '../components/QuestionForm';
 import { Survey, Question, Response, Answer } from '../types';
+import { api } from '../utils/api';
 
 export function SurveyDetail() {
   const { id } = useParams();
@@ -13,8 +14,8 @@ export function SurveyDetail() {
   const fetchData = async () => {
     try {
       const [surveyRes, responsesRes] = await Promise.all([
-        fetch(`/api/surveys/${id}`),
-        fetch(`/api/surveys/${id}/responses`)
+        api.get(`/api/surveys/${id}`),
+        api.get(`/api/surveys/${id}/responses`)
       ]);
 
       if (!surveyRes.ok || !responsesRes.ok) {

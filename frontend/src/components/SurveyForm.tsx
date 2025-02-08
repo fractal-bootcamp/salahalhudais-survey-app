@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../utils/api';
 
 export function SurveyForm() {
   const [title, setTitle] = useState('');
@@ -10,11 +11,7 @@ export function SurveyForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/surveys', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description }),
-      });
+      const response = await api.post('/api/surveys', { title, description });
       
       if (!response.ok) {
         throw new Error('Failed to create survey');
