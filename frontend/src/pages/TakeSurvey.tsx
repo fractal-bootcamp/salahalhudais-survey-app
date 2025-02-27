@@ -54,11 +54,6 @@ export function TakeSurvey() {
       </div>
 
       {survey.questions.map(question => {
-        console.log('Survey Question:', {
-          question,
-          hasOptions: question.options && question.options.length > 0,
-          options: question.options
-        });
         
         return (
           <div key={question.id} className="card bg-base-100 shadow-xl p-6">

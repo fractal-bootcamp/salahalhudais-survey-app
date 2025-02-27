@@ -61,15 +61,6 @@ export function SurveyDetail() {
               const answersForQuestion = responses.filter(r => 
                 r.answers?.some(a => a.questionId === question.id)
               );
-              
-              console.log('Question:', question);
-              console.log('Options:', question.options);
-              console.log('Question with options:', {
-                questionType: question.questionType,
-                options: question.options,
-                hasOptions: question.options && question.options.length > 0
-              });
-              
               return (
                 <div key={question.id} className="card bg-base-200 p-4">
                   <h3 className="text-xl font-semibold">
